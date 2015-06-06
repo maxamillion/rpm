@@ -213,5 +213,7 @@ rpmspec	alias --buildconflicts	--srpm --conflicts \
 	--POPTdesc=$"list capabilities conflicting with build of this package"
 rpmspec	alias --buildrequires	--srpm --requires \
 	--POPTdesc=$"list capabilities required to build this package"
+rpmspec	alias --checkrequires	--srpm --requires \
+	--POPTdesc=$"list capabilities required to build this package's check section"
 # \endverbatim
 #*/

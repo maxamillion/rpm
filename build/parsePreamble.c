@@ -71,7 +71,7 @@ static rpmRC addOrAppendListEntry(Header h, rpmTagVal tag, const char * line)
 	rpmlog(RPMLOG_ERR, _("Error parsing tag field: %s\n"), poptStrerror(xx));
 	return RPMRC_FAIL;
     }
-    if (argc) 
+    if (argc)
 	headerPutStringArray(h, tag, argv, argc);
     argv = _free(argv);
 
@@ -97,7 +97,7 @@ static int parseSimplePart(const char *line, char **name, int *flag)
 	rc = 1;
 	goto exit;
     }
-    
+
     if (rstreq(tok, "-n")) {
 	if (!(tok = strtok(NULL, " \t\n"))) {
 	    rc = 1;
@@ -148,7 +148,7 @@ static int parseNoSource(rpmSpec spec, const char * field, rpmTagVal tag)
 	flag = RPMBUILD_ISPATCH;
 	name = "patch";
     }
-    
+
     fe = field;
     for (f = fe; *f != '\0'; f = fe) {
         struct Source *p;
@@ -322,7 +322,7 @@ static int addSource(rpmSpec spec, Package pkg, const char *field, rpmTagVal tag
 #endif
 	free(body);
     }
-    
+
     return 0;
 }
 
@@ -428,7 +428,7 @@ static rpmRC checkForValidArchitectures(rpmSpec spec)
     char *arch = rpmExpand("%{_target_cpu}", NULL);
     char *os = rpmExpand("%{_target_os}", NULL);
     rpmRC rc = RPMRC_FAIL; /* assume failure */
-    
+
     if (isMemberInEntry(spec->buildRestrictions,
 			arch, RPMTAG_EXCLUDEARCH) == 1) {
 	rpmlog(RPMLOG_ERR, _("Architecture is excluded: %s\n"), arch);
@@ -583,7 +583,7 @@ static rpmRC readIcon(Header h, const char * file)
 	goto exit;
     }
     rc = RPMRC_OK;
-    
+
 exit:
     Fclose(fd);
     free(fn);
@@ -703,7 +703,7 @@ static rpmRC handlePreambleTag(rpmSpec spec, Package pkg, rpmTagVal tag,
     int multiToken = 0;
     rpmsenseFlags tagflags = RPMSENSE_ANY;
     rpmRC rc = RPMRC_FAIL;
-    
+
     if (field == NULL) /* XXX can't happen */
 	goto exit;
     /* Find the start of the "field" and strip trailing space */
@@ -859,6 +859,7 @@ static rpmRC handlePreambleTag(rpmSpec spec, Package pkg, rpmTagVal tag,
 	break;
     case RPMTAG_BUILDPREREQ:
     case RPMTAG_BUILDREQUIRES:
+    case RPMTAG_CHECKREQUIRES:
     case RPMTAG_BUILDCONFLICTS:
 	if (parseRCPOT(spec, spec->sourcePackage, field, tag, 0, tagflags))
 	    goto exit;
@@ -908,7 +909,7 @@ static rpmRC handlePreambleTag(rpmSpec spec, Package pkg, rpmTagVal tag,
 	addMacro(spec->macros, macro, NULL, field, RMIL_SPEC);
     rc = RPMRC_OK;
 exit:
-    return rc;	
+    return rc;
 }
 
 /* This table has to be in a peculiar order.  If one tag is the */
@@ -966,6 +967,7 @@ static struct PreambleRec_s const preambleList[] = {
     {RPMTAG_BUILDCONFLICTS,	0, 0, LEN_AND_STR("buildconflicts")},
     {RPMTAG_BUILDPREREQ,	0, 1, LEN_AND_STR("buildprereq")},
     {RPMTAG_BUILDREQUIRES,	0, 0, LEN_AND_STR("buildrequires")},
+    {RPMTAG_CHECKREQUIRES,	0, 0, LEN_AND_STR("checkrequires")},
     {RPMTAG_AUTOREQPROV,	0, 0, LEN_AND_STR("autoreqprov")},
     {RPMTAG_AUTOREQ,		0, 0, LEN_AND_STR("autoreq")},
     {RPMTAG_AUTOPROV,		0, 0, LEN_AND_STR("autoprov")},
@@ -1057,16 +1059,16 @@ int parsePreamble(rpmSpec spec, int initialPackage)
 
 	if (rpmCharCheck(spec, name, WHITELIST_NAME))
 	    goto exit;
-	
+
 	if (!lookupPackage(spec, name, flag, NULL)) {
 	    rpmlog(RPMLOG_ERR, _("Package already exists: %s\n"), spec->line);
 	    free(name);
 	    goto exit;
 	}
-	
+
 	/* Construct the package */
 	if (flag == PART_SUBNAME) {
-	    rasprintf(&NVR, "%s-%s", 
+	    rasprintf(&NVR, "%s-%s",
 		    headerGetString(spec->packages->header, RPMTAG_NAME), name);
 	} else
 	    NVR = xstrdup(name);
@@ -1077,7 +1079,7 @@ int parsePreamble(rpmSpec spec, int initialPackage)
 	NVR = xstrdup("(main package)");
 	pkg = newPackage(NULL, spec->pool, &spec->packages);
 	spec->sourcePackage = newPackage(NULL, spec->pool, NULL);
-	
+
     }
 
     if ((rc = readLine(spec, STRIP_TRAILINGSPACE | STRIP_COMMENTS)) > 0) {
@@ -1117,7 +1119,7 @@ int parsePreamble(rpmSpec spec, int initialPackage)
 	}
     }
 
-    /* 
+    /*
      * Expand buildroot one more time to get %{version} and the like
      * from the main package, validate sanity. The spec->buildRoot could
      * still contain unexpanded macros but it cannot be empty or '/', and it

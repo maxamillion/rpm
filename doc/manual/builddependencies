@@ -13,6 +13,16 @@ build dependencies look just like install dependencies in a spec file with
 	BuildConflicts:
 \endverbatim
 
+Similarly related to the way build dependencies, there are also a declaration
+of requirements that are specific to the check section of the spec file which
+allows for better analysis of requirements in the depsolve tree.
+Syntactically, dependencies look just like install dependencies in a spec file
+but with "Check" prefixed:
+
+\verbatim
+	CheckRequires:
+\endverbatim
+
 All the above dependencies include versions, files, existence/range tests, etc.
 The build dependency checking can also be turned off with --nodeps if necessary
 just like install dependency checking can. Eventually, build dependencies will

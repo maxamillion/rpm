@@ -27,7 +27,7 @@ static rpmRC checkSep(const char *s, char c, char **emsg)
 
 static rpmRC checkDep(rpmSpec spec, char *N, char *EVR, char **emsg)
 {
-    /* 
+    /*
      * Tokens must begin with alphanumeric, _, or /, but we don't know
      * the spec's encoding so we only check what we can: plain ascii.
      */
@@ -161,6 +161,7 @@ rpmRC parseRCPOT(rpmSpec spec, Package pkg, const char *field, rpmTagVal tagN,
 	break;
     case RPMTAG_BUILDPREREQ:
     case RPMTAG_BUILDREQUIRES:
+    case RPMTAG_CHECKREQUIRES:
 	nametag = RPMTAG_REQUIRENAME;
 	tagflags |= RPMSENSE_ANY;
 	break;
